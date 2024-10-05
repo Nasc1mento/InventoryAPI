@@ -3,6 +3,7 @@ package com.inventory.app.models;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,21 +15,20 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "suppliers")
 public class Supplier {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
-	
-	@Column(name = "name")
+
+	@Column(name = "name", nullable = false)
 	private String name;
-	
-	@Column(name = "contact")
+
+	@Column(name = "contact", nullable = false)
 	private String contact;
 	
-	@OneToMany(mappedBy = "supplier")
+	@OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Product> products;
 
-	
 	public Long getId() {
 		return id;
 	}
@@ -69,5 +69,5 @@ public class Supplier {
 		Supplier supplier = (Supplier) obj;
 		return Objects.equals(id, supplier.id);
 	}
-	
+
 }

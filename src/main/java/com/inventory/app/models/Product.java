@@ -1,17 +1,14 @@
 package com.inventory.app.models;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -38,19 +35,7 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "supplier_id")
 	private Supplier supplier;
-	
-	@ManyToMany(mappedBy = "products", cascade = CascadeType.ALL)
-    private List<Order> orders;
 
-	public Product(Long id, String name, String description, Integer quantity, BigDecimal price, Supplier supplier) {
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.quantity = quantity;
-		this.price = price;
-		this.supplier = supplier;
-	}
-	
 	public Product(Long id) {
 		this.id = id;
 	}
@@ -89,6 +74,9 @@ public class Product {
 	}
 
 	public void setQuantity(Integer quantity) {
+		if (quantity < 0)
+			throw new IllegalArgumentException("Quantity cannot be negative");
+
 		this.quantity = quantity;
 	}
 
@@ -123,7 +111,6 @@ public class Product {
 			return false;
 
 		Product product = (Product) obj;
-
 		return Objects.equals(product.id, this.id);
 	}
 
@@ -132,5 +119,5 @@ public class Product {
 		return "Product [id=" + id + ", name=" + name + ", description=" + description + ", quantity=" + quantity
 				+ ", price=" + price + ", supplier=" + supplier + "]";
 	}
-	
+
 }

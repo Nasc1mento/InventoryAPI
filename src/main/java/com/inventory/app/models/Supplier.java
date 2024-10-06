@@ -25,7 +25,7 @@ public class Supplier {
 
 	@Column(name = "contact", nullable = false)
 	private String contact;
-	
+
 	@OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Product> products;
 
@@ -66,8 +66,14 @@ public class Supplier {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		
 		Supplier supplier = (Supplier) obj;
 		return Objects.equals(id, supplier.id);
+	}
+
+	@Override
+	public String toString() {
+		return "Supplier [id=" + id + ", name=" + name + ", contact=" + contact + ", products=" + products + "]";
 	}
 
 }

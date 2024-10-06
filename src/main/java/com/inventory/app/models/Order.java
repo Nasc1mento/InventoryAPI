@@ -10,9 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,24 +21,29 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@Column(name = "quantity", nullable = false)
-	private Integer quantity;
-
 	@Column(name = "date", nullable = false)
 	private LocalDate date;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "order_product",
-	joinColumns = @JoinColumn(name = "product_id",referencedColumnName = "id"),
-	inverseJoinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"))
-	private List<Product> products;
+	@Column(name = "quantity")
+	private Integer quantity;
 
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrderProduct> orderProducts;
+	
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 
 	public Integer getQuantity() {
@@ -51,12 +54,13 @@ public class Order {
 		this.quantity = quantity;
 	}
 
-	public LocalDate getDate() {
-		return date;
+	public List<OrderProduct> getOrderProducts() {
+		return orderProducts;
 	}
 
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setOrderProducts(List<OrderProduct> orderProducts) {
+		this.orderProducts = orderProducts;
+		this.calculateQuantity();
 	}
 
 	@Override
@@ -72,7 +76,17 @@ public class Order {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+
 		Order other = (Order) obj;
 		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", date=" + date + ", orderProducts=" + orderProducts + "]";
+	}
+	
+	public void calculateQuantity() {
+		this.quantity = orderProducts.stream().mapToInt(orderProduct -> orderProduct.getQuantity()).sum();
 	}
 }

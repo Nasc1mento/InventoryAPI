@@ -29,19 +29,19 @@ public class SupplierController {
 	@PostMapping
 	public ResponseEntity<Supplier> create(@RequestBody Supplier supplier) {
 		supplier = this.supplierService.save(supplier);
-		return ResponseEntity.status(200).body(supplier);
+		return ResponseEntity.status(HttpStatus.CREATED).body(supplier);
 	}
 	
 	@GetMapping
 	public ResponseEntity<List<Supplier>> findAll() {
 		List<Supplier> suppliers = this.supplierService.findAll();
-		return ResponseEntity.status(200).body(suppliers);
+		return ResponseEntity.status(HttpStatus.OK).body(suppliers);
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Supplier> deleteById(@PathVariable Long id) {
 		this.supplierService.deleteById(id);
-		return new ResponseEntity<Supplier>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 }
